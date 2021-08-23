@@ -1,5 +1,4 @@
 import csv
-import json
 import os.path
 import random
 from time import time
@@ -8,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 import AnalyseResults
+import DataPreparation as dp
 from Models import Model, evaluate_params
 
 
@@ -69,22 +69,12 @@ def log_progress(runtime, mod_str, verbose=True):
 
 if __name__ == "__main__":
 
-    fileObject = open("data.json", "r")
-    jsonContent = fileObject.read()
-    aList = json.loads(jsonContent)
-    seeds = aList['seeds']
-    inner_seeds = aList['inner_seeds']
-    num_users_to_test = aList['num_users_to_test']
-    autotune_hyperparams = aList['autotune_hyperparams']
-    done_by_seed = aList['done_by_seed']
-    hists_by_user = aList['hists_by_user']
-    timestamp_split = aList['timestamp_split']
-    seed_timestamps = aList['seed_timestamps']
-    chrono_split = aList['chrono_split']
-    chrono_split = aList['chrono_split']
+    params = dp.DataPreparations().get_experiment_parameters()
+
     print('\nstart experiment!')
 
-    timer_evaluating_params = ModuleTimer(len(seeds) * len(inner_seeds) * num_users_to_test)
+    timer_evaluating_params = ModuleTimer(
+        len(params['seeds']) * len(params['inner_seeds']) * params['num_users_to_test'])
     timer_validation_results = ModuleTimer(len(seeds) * len(inner_seeds) * num_users_to_test)
     timer_test_results = ModuleTimer(len(seeds) * num_users_to_test)
     timers = [timer_evaluating_params, timer_validation_results, timer_test_results]
@@ -196,28 +186,29 @@ if __name__ == "__main__":
                     hist_train_and_valid, hist_test_x, hist_test_y = item
 
                     if chrono_split:
-                        if timestamp_split:
-                            h = hist_train_and_valid
-                            if seed_timestamps is None:  # does not support inner cross-validation
-                                hist_train = h.loc[h['timestamp'] < timestamp_valid_start].drop(columns='timestamp')
-                                hist_valid = h.loc[h['timestamp'] >= timestamp_valid_start].drop(
-                                    columns='timestamp')
-                            else:
-                                hist_valid_len = int(len(h) * (hist_valid_fracs[inner_seed_idx]))
-                                hist_train = h[:hist_valid_len].drop(columns='timestamp')
-                                hist_valid = h[hist_valid_len:].drop(columns='timestamp')
-                        else:
-                            hist_len = hist_train_ranges[user_id][1]
-                            valid_len = int(hist_len * valid_frac)
-                            delta = len(
-                                hist_train_and_valid) - 2 * valid_len  # space between min_idx and valid_start
-                            delta_frac = list(np.linspace(1, 0, len(inner_seeds)))
-                            random.seed(user_idx)
-                            random.shuffle(delta_frac)
-                            valid_start_idx = valid_len + int(delta * delta_frac[inner_seed])
-                            hist_train = hist_train_and_valid.iloc[0: valid_start_idx]
-                            # hist_valid = hist_train_and_valid.iloc[valid_start_idx: valid_start_idx + valid_len + 1]
-                            hist_valid = hist_train_and_valid.iloc[valid_start_idx:]
+                        # TODO
+                        # if timestamp_split:
+                        #     h = hist_train_and_valid
+                        #     if seed_timestamps is None:  # does not support inner cross-validation
+                        #         hist_train = h.loc[h['timestamp'] < timestamp_valid_start].drop(columns='timestamp')
+                        #         hist_valid = h.loc[h['timestamp'] >= timestamp_valid_start].drop(
+                        #             columns='timestamp')
+                        #     else:
+                        #         hist_valid_len = int(len(h) * (hist_valid_fracs[inner_seed_idx]))
+                        #         hist_train = h[:hist_valid_len].drop(columns='timestamp')
+                        #         hist_valid = h[hist_valid_len:].drop(columns='timestamp')
+                        # else:
+                        hist_len = hist_train_ranges[user_id][1]
+                        valid_len = int(hist_len * valid_frac)
+                        delta = len(
+                            hist_train_and_valid) - 2 * valid_len  # space between min_idx and valid_start
+                        delta_frac = list(np.linspace(1, 0, len(inner_seeds)))
+                        random.seed(user_idx)
+                        random.shuffle(delta_frac)
+                        valid_start_idx = valid_len + int(delta * delta_frac[inner_seed])
+                        hist_train = hist_train_and_valid.iloc[0: valid_start_idx]
+                        # hist_valid = hist_train_and_valid.iloc[valid_start_idx: valid_start_idx + valid_len + 1]
+                        hist_valid = hist_train_and_valid.iloc[valid_start_idx:]
                         hist_train_ranges[user_id][0] = [len(h2_train), len(h2_train) + len(hist_train)]
                     else:
                         hist_train_len = hist_train_ranges[user_id][1]
