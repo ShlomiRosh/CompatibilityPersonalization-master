@@ -8,6 +8,7 @@ import pandas as pd
 
 import AnalyseResults
 import DataPreparation as dp
+import ExperimentSettings as es
 from Models import Model, evaluate_params
 
 
@@ -58,9 +59,9 @@ def log_progress(runtime, mod_str, verbose=True):
     eta = get_time_string(sum(timer.eta for timer in timers))
     iteration = sum([timer.curr_iteration for timer in timers])
     progress_row = '%d/%d\tmod=%s \tseed=%d/%d \tinner_seed=%d/%d \tuser=%d/%d \ttime=%s \tETA=%s' % \
-                   (iteration, iterations, mod_str, seed_idx + 1, len(seeds), inner_seed_idx + 1,
-                    len(inner_seeds), user_count, num_users_to_test, runtime_string, eta)
-    with open('%s/progress_log.txt' % result_type_dir, 'a') as file:
+                   (iteration, iterations, mod_str, seed_idx + 1, len(params['seeds']), inner_seed_idx + 1,
+                    len(params['inner_seeds']), user_count, params['num_users_to_test'], runtime_string, eta)
+    with open('%s/progress_log.txt' % params['result_type_dir'], 'a') as file:
         file.write('%s\n' % progress_row)
     if verbose:
         print(progress_row)
@@ -75,62 +76,64 @@ if __name__ == "__main__":
 
     timer_evaluating_params = ModuleTimer(
         len(params['seeds']) * len(params['inner_seeds']) * params['num_users_to_test'])
-    timer_validation_results = ModuleTimer(len(seeds) * len(inner_seeds) * num_users_to_test)
-    timer_test_results = ModuleTimer(len(seeds) * num_users_to_test)
-    timers = [timer_evaluating_params, timer_validation_results, timer_test_results]
+    timer_validation_results = ModuleTimer(
+        len(params['seeds']) * len('params[inner_seeds') * params['num_users_to_test'])
+    timer_test_results = ModuleTimer(len(params['seeds']) * params['num_users_to_test'])
+    timers = [params['timer_evaluating_params'], params['timer_validation_results'], params['timer_test_results']]
     iterations = sum([timer.iterations for timer in timers])
 
     params_list = None
 
     loop_modes = [True, False]
-    if not autotune_hyperparams:  # dont evaluate hyper-param
+    if not params['autotune_hyperparams']:  # dont evaluate hyper-param
         loop_modes = [False]
 
-    # todo: OUTER FOLDS LOOP
-    for seed_idx, seed in enumerate(seeds):
+        # todo: OUTER FOLDS LOOP
+    for seed_idx, seed in enumerate(params['seeds']):
 
-        if seed in done_by_seed:  # check if seed was already done
-            done_by_inner_seed = done_by_seed[seed]
-            seed_is_done = len(done_by_inner_seed) == len(inner_seeds) and all(
-                [done_users == len(hists_by_user) for i, done_users in done_by_inner_seed.items()])
+        if seed in params['done_by_seed']:  # check if seed was already done
+            done_by_inner_seed = params['done_by_seed'][seed]
+            seed_is_done = len(done_by_inner_seed) == len(params['inner_seeds']) and all(
+                [done_users == len(params['hists_by_user']) for i, done_users in done_by_inner_seed.items()])
         else:
             done_by_inner_seed = {}
             seed_is_done = False
         if seed_is_done:
-            timer_evaluating_params.curr_iteration += len(inner_seeds) * len(hists_by_user)
-            timer_validation_results.curr_iteration += len(inner_seeds) * len(hists_by_user)
-            timer_test_results.curr_iteration += len(hists_by_user)
+            timer_evaluating_params.curr_iteration += len(params['inner_seeds']) * len(params['hists_by_user'])
+            timer_validation_results.curr_iteration += len(params['inner_seeds']) * len(params['hists_by_user'])
+            timer_test_results.curr_iteration += len(params['hists_by_user'])
             continue
 
-        if timestamp_split and seed_timestamps is not None:
-            timestamp_test_start = seed_timestamps[seed_idx]
+        # TODO
+        # if params['timestamp_split'] and params['seed_timestamps'] is not None:
+        #     timestamp_test_start = params['seed_timestamps'][seed_idx]
 
         # split the test sets
         hists_seed_by_user = {}
         hist_train_and_valid_ranges = {}
-        h2_train_and_valid = pd.DataFrame(columns=all_columns, dtype=np.float32)
-        for user_idx, item in enumerate(hists_by_user.items()):
+        h2_train_and_valid = pd.DataFrame(columns=params['paraall_columns'], dtype=np.float32)
+        for user_idx, item in enumerate(params['hists_by_user'].items()):
             user_id, hist = item
-            if chrono_split:  # time series nested cross-validation
-                if timestamp_split:
-                    hist_train_and_valid = hist.loc[hist['timestamp'] < timestamp_test_start]
-                    hist_test = hist.loc[hist['timestamp'] >= timestamp_test_start].drop(columns='timestamp')
-                    if keep_train_test_ratio:
-                        max_hist_test_len = int(len(hist) * test_frac)
-                        hist_test = hist_test[:min(len(hist_test), max_hist_test_len)]
-                else:
-                    valid_len = int(len(hist) * valid_frac)
-                    test_len = int(len(hist) * test_frac)
-                    min_idx = 3 * valid_len  # |train set| >= 2|valid set|
-                    delta = len(hist) - test_len - min_idx  # space between min_idx and test_start_idx
-                    delta_frac = list(np.linspace(1, 0, len(seeds)))
-                    random.seed(user_idx)
-                    random.shuffle(delta_frac)
-                    test_start_idx = min_idx + int(delta * delta_frac[seed])
-                    hist_train_and_valid = hist.iloc[0: test_start_idx]
-                    hist_test = hist.iloc[test_start_idx: test_start_idx + test_len + 1]
+            if params['chrono_split']:  # time series nested cross-validation
+                # if timestamp_split:
+                #     hist_train_and_valid = hist.loc[hist['timestamp'] < timestamp_test_start]
+                #     hist_test = hist.loc[hist['timestamp'] >= timestamp_test_start].drop(columns='timestamp')
+                #     if keep_train_test_ratio:
+                #         max_hist_test_len = int(len(hist) * test_frac)
+                #         hist_test = hist_test[:min(len(hist_test), max_hist_test_len)]
+                # else:
+                valid_len = int(len(hist) * es.valid_frac)
+                test_len = int(len(hist) * es.test_frac)
+                min_idx = 3 * valid_len  # |train set| >= 2|valid set|
+                delta = len(hist) - test_len - min_idx  # space between min_idx and test_start_idx
+                delta_frac = list(np.linspace(1, 0, len(params['seeds'])))
+                random.seed(user_idx)
+                random.shuffle(delta_frac)
+                test_start_idx = min_idx + int(delta * delta_frac[seed])
+                hist_train_and_valid = hist.iloc[0: test_start_idx]
+                hist_test = hist.iloc[test_start_idx: test_start_idx + test_len + 1]
             else:
-                hist_train_and_valid = hist.sample(n=int(len(hist) * (train_frac + valid_frac)),
+                hist_train_and_valid = hist.sample(n=int(len(hist) * (es.train_frac + es.valid_frac)),
                                                    random_state=seed)
                 hist_test = hist.drop(hist_train_and_valid.index).reset_index(drop=True)
 
