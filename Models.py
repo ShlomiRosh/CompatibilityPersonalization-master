@@ -1,8 +1,8 @@
 import numpy as np
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.linear_model import Ridge
 from sklearn.metrics import auc, roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.linear_model import Ridge
-from sklearn.ensemble import AdaBoostClassifier
 
 
 class Model:

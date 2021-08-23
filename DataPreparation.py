@@ -1,36 +1,15 @@
 import csv
+import json
 import os.path
 import shutil
 
+import category_encoders as ce
 import numpy as np
 import pandas as pd
-from time import time
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import MinMaxScaler
-import category_encoders as ce
-from Models import Model, evaluate_params
+
 from ExperimentSettings import get_experiment_parameters
-import AnalyseResults
-import random
-
-
-class ModuleTimer:
-    def __init__(self, iterations):
-        self.iterations = iterations
-        self.curr_iteration = 0
-        self.start_time = 0
-        self.avg_runtime = 0
-        self.eta = 0
-
-    def start_iteration(self):
-        self.start_time = int(round(time() * 1000))
-
-    def end_iteration(self):
-        runtime = (round(time() * 1000) - self.start_time) / 1000
-        self.curr_iteration += 1
-        self.avg_runtime = (self.avg_runtime * (self.curr_iteration - 1) + runtime) / self.curr_iteration
-        self.eta = (self.iterations - self.curr_iteration) * self.avg_runtime
-        return runtime
 
 
 def safe_make_dir(path):
@@ -40,36 +19,6 @@ def safe_make_dir(path):
 
 def min_and_max(x):
     return pd.Series(index=['min', 'max'], data=[x.min(), x.max()])
-
-
-def get_time_string(time_in_seconds):
-    eta_string = '%.1f(secs)' % (time_in_seconds % 60)
-    if time_in_seconds >= 60:
-        time_in_seconds /= 60
-        eta_string = '%d(mins) %s' % (time_in_seconds % 60, eta_string)
-        if time_in_seconds >= 60:
-            time_in_seconds /= 60
-            eta_string = '%d(hours) %s' % (time_in_seconds % 24, eta_string)
-            if time_in_seconds >= 24:
-                time_in_seconds /= 24
-                eta_string = '%d(days) %s' % (time_in_seconds, eta_string)
-    return eta_string
-
-
-def log_progress(runtime, mod_str, verbose=True):
-    runtime_string = get_time_string(runtime)
-    eta = get_time_string(sum(timer.eta for timer in timers))
-    iteration = sum([timer.curr_iteration for timer in timers])
-    progress_row = '%d/%d\tmod=%s \tseed=%d/%d \tinner_seed=%d/%d \tuser=%d/%d \ttime=%s \tETA=%s' % \
-                   (iteration, iterations, mod_str, seed_idx + 1, len(seeds), inner_seed_idx + 1,
-                    len(inner_seeds), user_count, num_users_to_test, runtime_string, eta)
-    with open('%s/progress_log.txt' % result_type_dir, 'a') as file:
-        file.write('%s\n' % progress_row)
-    if verbose:
-        print(progress_row)
-    pass
-
-
 
 
 if __name__ == "__main__":
@@ -110,7 +59,7 @@ if __name__ == "__main__":
     show_tradeoff_plots = True
     plot_confusion = False
     verbose = False
-
+    seed_timestamps = None
     dataset_dir = 'datasets/%s' % dataset_name
     result_dir = 'result'
 
@@ -374,3 +323,12 @@ if __name__ == "__main__":
             scaler.fit(min_max_col_values.drop(columns=[target_col]), min_max_col_values[[target_col]])
         labelizer.fit(min_max_col_values[[target_col]])
         del min_max_col_values
+
+    aDict = {"seeds": list(seeds), "inner_seeds": list(inner_seeds), 'num_users_to_test': num_users_to_test,
+             'autotune_hyperparams': str(autotune_hyperparams), 'done_by_seed': str(done_by_seed),
+             'hists_by_user': list(hists_by_user), 'timestamp_split': str(timestamp_split),
+             'seed_timestamps': str(seed_timestamps), 'chrono_split': str(chrono_split)}
+    jsonString = json.dumps(aDict)
+    jsonFile = open("data.json", "w")
+    jsonFile.write(jsonString)
+    jsonFile.close()

@@ -1,6 +1,3 @@
-import json
-
-
 def get_experiment_parameters(dataset_name, result_analysis=False):
     if dataset_name == 'assistment':
         # FOR MODEL TESTING
@@ -33,8 +30,8 @@ def get_experiment_parameters(dataset_name, result_analysis=False):
 
                         # 'params': {'ccp_alpha': [0.00001, 0.0001, 0.001, 0.01, 0.1]}}
                         'params': {'ccp_alpha': [0.001, 0.01]}}
-                        # 'params': {'ccp_alpha': 0.004}}
-                        # 'params': {'ccp_alpha': 0.001}}
+        # 'params': {'ccp_alpha': 0.004}}
+        # 'params': {'ccp_alpha': 0.001}}
 
         # model_params = {'name': 'adaboost',
         #
