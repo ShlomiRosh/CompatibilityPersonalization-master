@@ -32,7 +32,16 @@ min_subset_size = 5
 train_frac = 0.6
 valid_frac = 0.3
 
-result_dir = 'result'
+normalize_numeric_features = False
+
+h1_frac = 0.01
+metrics = ['auc']
+model_params = {'name': 'tree',
+
+                'forced_params_per_model': {},
+
+                # 'params': {'ccp_alpha': 0.001}
+                }
 # ------ experiment settings
 
 

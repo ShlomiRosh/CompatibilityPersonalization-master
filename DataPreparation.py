@@ -37,7 +37,7 @@ class DataPreparations:
         chrono_split = True
         timestamp_split = False
         autotune_hyperparams = True
-        normalize_numeric_features = False
+
         balance_histories = False
 
         # output settings
@@ -54,8 +54,12 @@ class DataPreparations:
         params = model_params['params']
         if not isinstance(next(iter(params.values())), list):
             autotune_hyperparams = False
-        if not autotune_hyperparams:
-            chosen_params = params
+
+        #     TODO
+        # if not autotune_hyperparams:
+        #     chosen_params = params
+        chosen_params = params
+
         # TODO
         # if timestamp_split:
         #     # if predetermined_timestamps and os.path.exists(timestamps_path):
@@ -306,8 +310,9 @@ class DataPreparations:
 
             min_max_col_values = min_max_col_values.reset_index(drop=True)
             scaler, labelizer = MinMaxScaler(), LabelBinarizer()
-            if normalize_numeric_features:
-                scaler.fit(min_max_col_values.drop(columns=[target_col]), min_max_col_values[[target_col]])
+            # TODO
+            # if normalize_numeric_features:
+            #     scaler.fit(min_max_col_values.drop(columns=[target_col]), min_max_col_values[[target_col]])
             labelizer.fit(min_max_col_values[[target_col]])
             del min_max_col_values
 
@@ -315,5 +320,9 @@ class DataPreparations:
             'seeds': seeds, 'inner_seeds': inner_seeds, 'num_users_to_test': num_users_to_test,
             'autotune_hyperparams': autotune_hyperparams, 'done_by_seed': done_by_seed,
             'hists_by_user': hists_by_user, 'timestamp_split': timestamp_split,
-            'seed_timestamps': seed_timestamps, 'chrono_split': chrono_split
+            'seed_timestamps': seed_timestamps, 'chrono_split': chrono_split, 'target_col': target_col,
+            'scaler': scaler, 'labelizer': labelizer, 'user_ids':user_ids, 'all_columns':all_columns,
+            'hist_train_ranges':hist_train_ranges, 'chosen_params':chosen_params, 'model_type':model_type,
+            'diss_weights':diss_weights, 'no_compat_equality_groups_per_model':no_compat_equality_groups_per_model,
+            'result_type_dir':result_type_dir
         }
