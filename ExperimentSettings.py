@@ -32,7 +32,7 @@ min_subset_size = 5
 train_frac = 0.6
 valid_frac = 0.3
 
-
+result_dir = 'result'
 # ------ experiment settings
 
 
