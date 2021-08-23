@@ -75,35 +75,35 @@ if __name__ == "__main__":
 
     timer_evaluating_params = ModuleTimer(
         len(params['seeds']) * len(params['inner_seeds']) * params['num_users_to_test'])
-    timer_validation_results = ModuleTimer(len(seeds) * len(inner_seeds) * num_users_to_test)
-    timer_test_results = ModuleTimer(len(seeds) * num_users_to_test)
-    timers = [timer_evaluating_params, timer_validation_results, timer_test_results]
+    timer_validation_results = ModuleTimer(len(params['seeds']) * len('params[inner_seeds') * params['num_users_to_test'])
+    timer_test_results = ModuleTimer(len(params['seeds']) * params['num_users_to_test'])
+    timers = [params['timer_evaluating_params'], params['timer_validation_results'], params['timer_test_results']]
     iterations = sum([timer.iterations for timer in timers])
 
     params_list = None
 
     loop_modes = [True, False]
-    if not autotune_hyperparams:  # dont evaluate hyper-param
+    if not params['autotune_hyperparams']:  # dont evaluate hyper-param
         loop_modes = [False]
 
     # todo: OUTER FOLDS LOOP
-    for seed_idx, seed in enumerate(seeds):
+    for seed_idx, seed in enumerate(params['seeds']):
 
-        if seed in done_by_seed:  # check if seed was already done
-            done_by_inner_seed = done_by_seed[seed]
-            seed_is_done = len(done_by_inner_seed) == len(inner_seeds) and all(
-                [done_users == len(hists_by_user) for i, done_users in done_by_inner_seed.items()])
+        if seed in params['done_by_seed']:  # check if seed was already done
+            done_by_inner_seed = params['done_by_seed'][seed]
+            seed_is_done = len(done_by_inner_seed) == len(params['inner_seeds']) and all(
+                [done_users == len(params['hists_by_user']) for i, done_users in done_by_inner_seed.items()])
         else:
             done_by_inner_seed = {}
             seed_is_done = False
         if seed_is_done:
-            timer_evaluating_params.curr_iteration += len(inner_seeds) * len(hists_by_user)
-            timer_validation_results.curr_iteration += len(inner_seeds) * len(hists_by_user)
-            timer_test_results.curr_iteration += len(hists_by_user)
+            timer_evaluating_params.curr_iteration += len(params['inner_seeds']) * len(params['hists_by_user'])
+            timer_validation_results.curr_iteration += len(params['inner_seeds']) * len(params['hists_by_user'])
+            timer_test_results.curr_iteration += len(params['hists_by_user'])
             continue
 
-        if timestamp_split and seed_timestamps is not None:
-            timestamp_test_start = seed_timestamps[seed_idx]
+        if params['timestamp_split'] and params['seed_timestamps'] is not None:
+            timestamp_test_start = params['seed_timestamps'][seed_idx]
 
         # split the test sets
         hists_seed_by_user = {}
