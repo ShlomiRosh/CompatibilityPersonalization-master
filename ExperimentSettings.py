@@ -29,6 +29,9 @@ test_frac = 0.1
 predetermined_timestamps = True
 min_subset_size = 5
 
+train_frac = 0.6
+valid_frac = 0.3
+
 
 # ------ experiment settings
 
