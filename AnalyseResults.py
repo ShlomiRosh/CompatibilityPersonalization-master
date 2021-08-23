@@ -1,19 +1,13 @@
+import csv
 import os
-import math
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+from scipy.stats import ttest_rel
 from sklearn.metrics import auc
-from scipy.stats import ttest_rel, mannwhitneyu, f_oneway
+
 from ExperimentSettings import get_experiment_parameters
-import csv
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn import tree
-from sklearn.model_selection import KFold
-from sklearn.metrics import confusion_matrix
-from joblib import dump
-import itertools
 
 
 def safe_make_dir(path):

@@ -1,17 +1,18 @@
 import csv
 import os.path
+import random
 import shutil
+from time import time
 
+import category_encoders as ce
 import numpy as np
 import pandas as pd
-from time import time
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import MinMaxScaler
-import category_encoders as ce
-from Models import Model, evaluate_params
-from ExperimentSettings import get_experiment_parameters
+
 import AnalyseResults
-import random
+from ExperimentSettings import get_experiment_parameters
+from Models import Model, evaluate_params
 
 
 class ModuleTimer:
@@ -72,8 +73,8 @@ def log_progress(runtime, mod_str, verbose=True):
 
 if __name__ == "__main__":
 
-    dataset_name = 'assistment'
-    # dataset_name = 'citizen_science'
+    # dataset_name = 'assistment'
+    dataset_name = 'citizen_science'
     # dataset_name = 'mooc'
 
     # model settings
@@ -173,9 +174,10 @@ if __name__ == "__main__":
     header = ['user', 'len', 'seed', 'inner_seed', 'h1_acc', 'weight']
     for model_name in model_names:
         header.extend(['%s x' % model_name, '%s y' % model_name])
-
+    k = 0
     # run whole experiment for each user column selection
     for user_col in user_cols:
+        print('Hi', k)
         print('user column = %s' % user_col)
         done_by_seed = {}
 
