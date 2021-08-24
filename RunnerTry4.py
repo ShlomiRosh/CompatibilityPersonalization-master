@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 
 import AnalyseResults
-import DataPreparation2 as dp
-import ExperimentSettings2 as es
+import DataPreparation3 as dp
+import ExperimentSettings3 as es
 from Models import Model, evaluate_params
 
 

@@ -37,60 +37,14 @@ class DataPreparations:
         self.min_hist_len_to_test = es.min_hist_len_to_test
         self.__run_prepartion()
 
-        # weights_num, weights_range, model_params, min_hist_len, \
-        # max_hist_len, metrics, min_hist_len_to_test
-
     def get_experiment_parameters(self):
         return self.__prepared_params
 
     def __run_prepartion(self):
 
-        no_compat_equality_groups = [['no hist', 'm4', 'm6'], ['m1', 'm2', 'm3'], ['m5', 'm7', 'm8']]
-        no_compat_equality_groups_per_model = {}
-        for group in no_compat_equality_groups:
-            for member in group:
-                no_compat_equality_groups_per_model[member] = group
-
-        # TODO SKIP cols
-        # skip cols
-        # user_cols_not_skipped = []
-        # for user_col in self.user_cols:
-        #     if user_col not in self.skip_cols:
-        #         user_cols_not_skipped.append(user_col)
-        # original_categs_not_skipped = []
-        # for categ in self.original_categ_cols:
-        #     if categ not in self.skip_cols:
-        #         original_categs_not_skipped.append(categ)
-        # user_cols = user_cols_not_skipped
-        # original_categ_cols = original_categs_not_skipped
-
-        # create results dir
-        # TODO TODAY
-        # dataset_path = '%s/%s.csv' % (dataset_dir, dataset_name)
-        # if overwrite_result_folder and os.path.exists(result_dir):
-        #     shutil.rmtree(result_dir)
-        # if not os.path.exists(result_dir):
-        #     os.makedirs(result_dir)
-        #     with open('%s/parameters.csv' % result_dir, 'w', newline='') as file_out:
-        #         writer = csv.writer(file_out)
-        #         writer.writerow(['train_frac', 'valid_frac', 'dataset_max_size', 'h1_frac', 'h2_len', 'seeds',
-        #                          'inner_seeds', 'weights_num', 'weights_range', 'min_hist_len', 'max_hist_len',
-        #                          'skip_cols', 'model_type', 'params'])
-        #         writer.writerow(
-        #             [self.train_frac, self.valid_frac, self.df_max_size, self.h1_frac, self.h2_len, len(self.seeds), len(self.inner_seeds),
-        #              self.weights_num, str(self.weights_range), self.min_hist_len, self.max_hist_len,
-        #              str(self.skip_cols), model_type, chosen_params])
-        # header = ['user', 'len', 'seed', 'inner_seed', 'h1_acc', 'weight']
-        # for model_name in model_names:
-        #     header.extend(['%s x' % model_name, '%s y' % model_name])
-
         self.__create_params_file()
 
         # run whole experiment for each user column selection
-        self.__load_user_prepared_params(no_compat_equality_groups_per_model)
-
-    def __load_user_prepared_params(self, no_compat_equality_groups_per_model):
-        diss_weights = list(np.linspace(0, 1, self.weights_num))
         user_col = es.data_sets[es.dataset_name]['user_cols'][0]
 
         print('user column = %s' % user_col)
@@ -107,72 +61,21 @@ class DataPreparations:
 
         self.__load_seeds_in_cache(cache_dir, user_col)
 
-        self.__prepared_params = self.__get_prepared_params(cache_dir, user_col, diss_weights, result_type_dir,
-                                                            no_compat_equality_groups_per_model, done_by_seed)
+        self.__prepared_params = self.__get_prepared_params(cache_dir, user_col, result_type_dir, done_by_seed)
 
-        # TODO groups_by_user
-        # print("determine experiment's users...")
-        # min_max_col_values = pd.read_csv('%s/all_columns.csv' % cache_dir, dtype=np.int64)
-        # all_columns = min_max_col_values.columns
-        #
-        # dataset = pd.read_csv('%s/0.csv' % cache_dir)
-        #
-        # groups_by_user = dataset.groupby(user_col, sort=False)
-        # hists_by_user = {}
-        # hist_train_ranges = {}
-        # curr_h2_len = 0
-        # num_users_to_test = 0
-        # user_ids = []
-        #
-        # for user_id, hist in groups_by_user:
-        #     user_ids.append(user_id)
-        #     hist = hist.drop(columns=[user_col])
-        #
-        #     hist_train_len = len(hist) * self.train_frac
-        #     if self.hists_already_determined or (
-        #             self.min_hist_len <= hist_train_len and curr_h2_len + hist_train_len <= self.h2_len):
-        #         if len(hist) >= self.min_hist_len_to_test:
-        #             num_users_to_test += 1
-        #         if len(hist) > self.max_hist_len:
-        #             hist = hist[:self.max_hist_len]
-        #         hists_by_user[user_id] = hist
-        #         min_max_col_values = min_max_col_values.append(hist.apply(min_and_max), sort=False)
-        #
-        #         hist_train_ranges[user_id] = [curr_h2_len, len(hist)]
-        #         curr_h2_len += len(hist)
-        #
-        # del groups_by_user
-        #
-        # print('cols=%d data_len=%d h1_frac=%s users=%d diss_weights=%d model_type=%s auto_tune_params=%s' % (
-        #     len(all_columns) - 1, curr_h2_len, self.h1_frac, len(hists_by_user), len(diss_weights), model_type,
-        #     True))
-        #
-        # # hists_by_user
-        #
-        # min_max_col_values = min_max_col_values.reset_index(drop=True)
-        # scaler, labelizer = MinMaxScaler(), LabelBinarizer()
-        # labelizer.fit(min_max_col_values[[self.target_col]])
-        # del min_max_col_values
-        #
-        # self.__prepared_params = {
-        #     'seeds': self.seeds, 'inner_seeds': self.inner_seeds, 'num_users_to_test': num_users_to_test,
-        #     'done_by_seed': done_by_seed, 'hists_by_user': hists_by_user, 'target_col': self.target_col,
-        #     'scaler': scaler, 'labelizer': labelizer, 'user_ids': user_ids, 'all_columns': all_columns,
-        #     'hist_train_ranges': hist_train_ranges, 'chosen_params': es.model_params['params'],
-        #     'model_type': model_type,
-        #     'diss_weights': diss_weights, 'no_compat_equality_groups_per_model': no_compat_equality_groups_per_model,
-        #     'result_type_dir': result_type_dir
-        # }
-
-    def __get_prepared_params(self, cache_dir, user_col, diss_weights, result_type_dir,
-                              no_compat_equality_groups_per_model, done_by_seed):
+    def __get_prepared_params(self, cache_dir, user_col, result_type_dir, done_by_seed):
+        diss_weights = list(np.linspace(0, 1, self.weights_num))
         model_type = es.model_params['name']
         hists_by_user = {}
         hist_train_ranges = {}
         curr_h2_len = 0
         num_users_to_test = 0
         user_ids = []
-        # done_by_seed = {}
+
+        no_compat_equality_groups_per_model = {}
+        for group in es.no_compat_equality_groups:
+            for member in group:
+                no_compat_equality_groups_per_model[member] = group
 
         print("determine experiment's users...")
         min_max_col_values = pd.read_csv('%s/all_columns.csv' % cache_dir, dtype=np.int64)

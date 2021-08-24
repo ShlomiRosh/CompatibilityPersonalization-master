@@ -3,7 +3,7 @@ import random
 import numpy as np
 import pandas as pd
 
-import ExperimentSettings2 as es
+import ExperimentSettings3 as es
 import RunnerFinal as r
 from Models import Model, evaluate_params
 

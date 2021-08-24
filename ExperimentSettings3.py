@@ -24,6 +24,7 @@ models_to_test = {
     'm8': [1, 1, 1, 1],
 }
 model_names = list(models_to_test.keys())
+no_compat_equality_groups = [['no hist', 'm4', 'm6'], ['m1', 'm2', 'm3'], ['m5', 'm7', 'm8']]
 
 # data sets settings
 data_sets = {
@@ -31,14 +32,12 @@ data_sets = {
         'path': 'Datasets/assistment/assistment.csv',
         'target_col': 'correct',
         'user_cols': ['user_id'],
-        # 'user_cols_not_skipped': ['user_id'],
         'skip_cols': ['skill'],
         'original_categ_cols': ['skill', 'tutor_mode', 'answer_type', 'type', 'original'],
-        # 'original_categs_not_skipped': ['tutor_mode', 'answer_type', 'type', 'original'],
-
         'seeds': range(1),
         'inner_seeds': range(1),
         'weights_num': 2,
+        'hists_already_determined': False,
         'result_analysis': {
             'version': '1 outer fold',
             'user_type': 'user_id',
@@ -48,34 +47,30 @@ data_sets = {
             'bin_size': 1,
             'min_hist_len_to_test': 0
             # version:, user_type, target_col, experiment_type, performance_metric, bin_size, min_hist_len_to_test
-        },
-        'hists_already_determined': False
+        }
         # FOR RESULT ANALYSIS
     },
     'citizen_science': {
         'path': 'Datasets/citizen_science/citizen_science.csv',
         'target_col': 'd_label',
         'user_cols': ['user_id'],
-        # 'user_cols_not_skipped': ['user_id'],
         'skip_cols': [],
         'original_categ_cols': [],
-        # 'original_categs_not_skipped': [],
         'seeds': range(5),
         'inner_seeds': range(10),
         'weights_num': 5,
         'hists_already_determined': True,
         'result_analysis': {
-            # 'version': '1 outer fold',
-            # 'user_type': 'user_id',
-            # 'target_col': 'correct',
-            # 'experiment_type': 'fit on train and valid',
-            # 'performance_metric': 'auc',
-            # 'bin_size': 1,
-            # 'min_hist_len_to_test': 0
+            'version': '5 outer folds',
+            'user_type': 'user_id',
+            'target_col': 'd_label',
+            'experiment_type': 'fit on train and valid',
+            'performance_metric': 'auc',
+            'bin_size': 1,
+            'min_hist_len_to_test': 0
             # # version:, user_type, target_col, experiment_type, performance_metric, bin_size, min_hist_len_to_test
         },
     }
-
 }
 
 # --------------------------------COMMON--------------------------
@@ -83,6 +78,8 @@ data_sets = {
 df_max_size = 0
 train_frac = 0.6
 valid_frac = 0.3
+test_frac = 0.1
+
 h1_frac = 0.01  # if > 1 then is considered as num. of samples, not fraction
 h2_len = 10000000
 
@@ -104,22 +101,18 @@ verbose = False
 keep_train_test_ratio = True
 autotune_autc = False
 keep_train_test_ratio = True
-test_frac = 0.1
 predetermined_timestamps = True
 min_subset_size = 5
 
-train_frac = 0.6
-valid_frac = 0.3
 
 normalize_numeric_features = False
 
-h1_frac = 0.01
-metrics = ['auc']
 model_params = {'name': 'tree',
 
                 'forced_params_per_model': {},
                 # TODO DEPENDS ON DATASET (ASSETMENT)
                 'params': {'ccp_alpha': [0.001, 0.01]}
+                # [0.001, 0.01]
                 }
 
 
