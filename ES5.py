@@ -34,8 +34,8 @@ dataset_path = '%s/%s.csv' % (dataset_dir, dataset_name)
 data_sets = {
     'assistment': {
         'models': [
-            {'clf': 'tree', 'params': {'ccp_alpha': [0.001, 0.01]}},
-            # {'clf': 'forest', 'params': {'ccp_alpha': [0.0]}},
+            # {'clf': 'tree', 'params': {'ccp_alpha': [0.001, 0.01]}},
+            {'clf': 'forest', 'params': {'ccp_alpha': [0.001, 0.01]}},
             # {'clf': 'xgboost', 'params': {'max_leaves': [0]}}
         ],
         'path': 'Datasets/assistment/assistment.csv',
@@ -60,7 +60,7 @@ data_sets = {
     },
     'citizen_science': {
         'models': [
-            {'clf': 'tree', 'params': {'ccp_alpha': [0.001, 0.01]}},
+            {'clf': 'tree', 'params': {'ccp_alpha': [0.0]}},
             # {'clf': 'forest', 'params': {'ccp_alpha': [0.0]}},
             # {'clf': 'xgboost', 'params': {'max_leaves': [0]}}
         ],
@@ -108,13 +108,20 @@ metrics = ['auc']
 diss_weights = list(np.linspace(0, 1, data_sets[dataset_name]['weights_num']))
 
 # experiment settings
-only_test = False
-make_tradeoff_plots = True
-show_tradeoff_plots = True
-plot_confusion = False
-verbose = False
-keep_train_test_ratio = True
 autotune_autc = False
-predetermined_timestamps = True
-min_subset_size = 5
-normalize_numeric_features = False
+verbose = False
+
+# NestedCrossValidation only
+only_test = False
+# RunnerFinal only
+make_tradeoff_plots = True
+# AnalyseResults and RunnerFinal
+show_tradeoff_plots = True
+
+# NOT IN USED
+# plot_confusion = False
+# keep_train_test_ratio = True
+# predetermined_timestamps = True
+# min_subset_size = 5
+# normalize_numeric_features = False
+#
