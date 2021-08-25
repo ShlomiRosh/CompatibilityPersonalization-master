@@ -114,13 +114,8 @@ class DataPreparations:
         print('loading %s dataset...' % es.dataset_name)
         if all_seeds_in_cache:
             return
-        categ_cols = data_config['original_categ_cols']
-        try:  # dont one hot encode the user_col
-            categ_cols.remove(user_col)
-        except ValueError:
-            pass
 
-        dataset_full = self.__load_data(user_col, categ_cols)
+        dataset_full = self.__load_data(user_col)
 
         if data_config['hists_already_determined']:  # todo: handle multiple seeds when balancing
             dataset_full.to_csv('%s/0.csv' % cache_dir, index=False)
@@ -131,11 +126,20 @@ class DataPreparations:
             self.__sort_user_histories(dataset_full, user_col, cache_dir)
         del dataset_full
 
-    def __load_data(self, user_col, categ_cols):
+    def __load_data(self, user_col):
         data_config = es.data_sets[es.dataset_name]
         dataset_full = pd.read_csv(es.dataset_path).drop(columns=data_config['skip_cols'])
         if 'timestamp' in dataset_full.columns:
             dataset_full = dataset_full.drop(columns='timestamp')
+
+        categ_cols = data_config['original_categ_cols']
+        try:  # dont one hot encode the user_col
+            categ_cols.remove(user_col)
+        except ValueError:
+            pass
+        for category in categ_cols:
+            if category in data_config['skip_cols']:
+                categ_cols.remove(category)
 
         print('one-hot encoding the data... ')
         col_groups_dict = {}
