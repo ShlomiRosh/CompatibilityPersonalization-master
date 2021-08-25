@@ -1,10 +1,21 @@
-dataset_name = 'assistment'
-# dataset_name = 'citizen_science'
+# dataset_name = 'assistment'
+dataset_name = 'citizen_science'
 # dataset_name = 'mooc'
 
-# dataset settings
-dataset_dir = 'datasets/%s' % dataset_name
-dataset_path = '%s/%s.csv' % (dataset_dir, dataset_name)
+model_params = {'name': 'tree',
+
+                'forced_params_per_model': {},
+                # TODO DEPENDS ON DATASET (ASSETMENT)
+                'params': {'ccp_alpha': [0.001, 0.01]}
+                # [0.001, 0.01]
+                }
+
+# model_params = {'name': 'tree',
+#                 'forced_params_per_model': {},
+#                 # TODO DEPENDS ON DATASET (CITIZEN)
+#                 'params': {'ccp_alpha': [0.0]}
+#                 }
+
 
 # output settings
 result_dir = 'result'
@@ -26,7 +37,9 @@ models_to_test = {
 model_names = list(models_to_test.keys())
 no_compat_equality_groups = [['no hist', 'm4', 'm6'], ['m1', 'm2', 'm3'], ['m5', 'm7', 'm8']]
 
-# data sets settings
+# dataset settings
+dataset_dir = 'datasets/%s' % dataset_name
+dataset_path = '%s/%s.csv' % (dataset_dir, dataset_name)
 data_sets = {
     'assistment': {
         'path': 'Datasets/assistment/assistment.csv',
@@ -48,7 +61,6 @@ data_sets = {
             'min_hist_len_to_test': 0
             # version:, user_type, target_col, experiment_type, performance_metric, bin_size, min_hist_len_to_test
         }
-        # FOR RESULT ANALYSIS
     },
     'citizen_science': {
         'path': 'Datasets/citizen_science/citizen_science.csv',
@@ -73,26 +85,20 @@ data_sets = {
     }
 }
 
-# --------------------------------COMMON--------------------------
 # model settings
 df_max_size = 0
 train_frac = 0.6
 valid_frac = 0.3
 test_frac = 0.1
-
 h1_frac = 0.01  # if > 1 then is considered as num. of samples, not fraction
 h2_len = 10000000
-
 weights_range = [0, 1]
-# user settings
 min_hist_len = 50
 max_hist_len = 10000000
 min_hist_len_to_test = 0
 metrics = ['auc']
 
-# -------------------------------
-
-# experiment settings -----
+# experiment settings
 only_test = False
 make_tradeoff_plots = True
 show_tradeoff_plots = True
@@ -100,31 +106,9 @@ plot_confusion = False
 verbose = False
 keep_train_test_ratio = True
 autotune_autc = False
-keep_train_test_ratio = True
 predetermined_timestamps = True
 min_subset_size = 5
-
-
 normalize_numeric_features = False
-
-model_params = {'name': 'tree',
-
-                'forced_params_per_model': {},
-                # TODO DEPENDS ON DATASET (ASSETMENT)
-                'params': {'ccp_alpha': [0.001, 0.01]}
-                # [0.001, 0.01]
-                }
-
-
-# model_params = {'name': 'tree',
-#                 'forced_params_per_model': {},
-#                 # TODO DEPENDS ON DATASET (CITIZEN)
-#                 'params': {'ccp_alpha': [0.0]}
-#                 }
-
-
-# chrono_split = True
-# ------ experiment settings
 
 
 def get_experiment_parameters(dataset_name, result_analysis=False):
