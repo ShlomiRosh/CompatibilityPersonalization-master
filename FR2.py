@@ -1,5 +1,4 @@
 import csv
-import os.path
 from time import time
 
 import numpy as np
@@ -79,7 +78,7 @@ def show_result(params):
         log_dir = '%s/%s' % (params['result_type_dir'], es.metrics[0])
         if len(es.model_names):
             AnalyseResults.binarize_results_by_compat_values(log_dir, 'test', len(params['diss_weights']) * 4,
-                                                             print_progress=False)
+                                                             print_progress=True)
             models_for_plotting = AnalyseResults.get_model_dict('jet')
             AnalyseResults.plot_results(log_dir, es.dataset_name, models_for_plotting, 'test_bins', True,
                                         show_tradeoff_plots=es.show_tradeoff_plots, diss_labels=False,
@@ -89,13 +88,13 @@ def show_result(params):
             print(np.average(df['h1_acc'], weights=df['len']))
 
 
-def safe_make_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-
-def min_and_max(x):
-    return pd.Series(index=['min', 'max'], data=[x.min(), x.max()])
+# def safe_make_dir(path):
+#     if not os.path.exists(path):
+#         os.makedirs(path)
+#
+#
+# def min_and_max(x):
+#     return pd.Series(index=['min', 'max'], data=[x.min(), x.max()])
 
 
 def get_time_string(time_in_seconds):
@@ -114,7 +113,6 @@ def get_time_string(time_in_seconds):
 
 def main():
     params = dp.DataPreparations().get_experiment_parameters()
-    # save_params_to_json(params)
     timers_params = {}
     set_timers(params, timers_params)
     ncv.NestedCrossValidationProcess(params, timers_params)

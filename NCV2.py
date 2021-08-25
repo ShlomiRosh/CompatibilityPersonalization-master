@@ -178,25 +178,26 @@ class NestedCrossValidationProcess:
         if evaluating_params:
             scores_per_model = {}
             for model_name in es.model_names:
-                if model_name not in es.model_params['forced_params_per_model']:
-                    found = False
-                    if not es.autotune_autc:  # look for best params to steal from other models
-                        for member in params['no_compat_equality_groups_per_model'][model_name]:
-                            if member in scores_per_model:
-                                scores_per_model[model_name] = scores_per_model[member]
-                                found = True
-                                break
-                    if not found:
-                        subset_weights = es.models_to_test[model_name]
-                        scores = evaluate_params(
-                            params['model_type'], self.loops_params['h2_train_x'], self.loops_params['h2_train_y'],
-                            tuning_x, tuning_y, es.metrics[0],
-                            params['chosen_params'], subset_weights, self.loops_params['h1'],
-                            self.loops_params['hist_train_range'],
-                            get_autc=es.autotune_autc, verbose=es.verbose)[0]
-                        scores_per_model[model_name] = scores
-                    scores = scores_per_model[model_name]
-                    self.loops_params['scores_per_user'][user_id][model_name].append(scores)
+                # TODO
+                # if model_name not in es.model_params['forced_params_per_model']:
+                found = False
+                if not es.autotune_autc:  # look for best params to steal from other models
+                    for member in params['no_compat_equality_groups_per_model'][model_name]:
+                        if member in scores_per_model:
+                            scores_per_model[model_name] = scores_per_model[member]
+                            found = True
+                            break
+                if not found:
+                    subset_weights = es.models_to_test[model_name]
+                    scores = evaluate_params(
+                        params['model_type'], self.loops_params['h2_train_x'], self.loops_params['h2_train_y'],
+                        tuning_x, tuning_y, es.metrics[0],
+                        params['chosen_params'], subset_weights, self.loops_params['h1'],
+                        self.loops_params['hist_train_range'],
+                        get_autc=es.autotune_autc, verbose=es.verbose)[0]
+                    scores_per_model[model_name] = scores
+                scores = scores_per_model[model_name]
+                self.loops_params['scores_per_user'][user_id][model_name].append(scores)
         else:
             if not es.only_test:
                 best_params_per_model = self.loops_params['best_params_per_user'][user_id]

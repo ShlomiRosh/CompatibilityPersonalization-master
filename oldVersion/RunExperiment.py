@@ -111,7 +111,7 @@ if __name__ == "__main__":
     verbose = False
 
     dataset_dir = 'datasets/%s' % dataset_name
-    result_dir = 'result'
+    result_dir = '../result'
 
     target_col, original_categ_cols, user_cols, skip_cols, hists_already_determined, df_max_size, train_frac, \
     valid_frac, h1_frac, h2_len, seeds, inner_seeds, weights_num, weights_range, model_params, min_hist_len, \
