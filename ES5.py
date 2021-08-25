@@ -1,7 +1,4 @@
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-from xgboost import XGBClassifier
 
 dataset_name = 'assistment'
 # dataset_name = 'citizen_science'
@@ -37,9 +34,9 @@ dataset_path = '%s/%s.csv' % (dataset_dir, dataset_name)
 data_sets = {
     'assistment': {
         'models': [
-            {'clf': DecisionTreeClassifier(), 'params': {'ccp_alpha': [0.001, 0.01]}},
-            # {'clf': RandomForestClassifier(), 'params': {'ccp_alpha': [0.0]}},
-            # {'clf': XGBClassifier(), 'params': {'max_leaves': [0]}}
+            {'clf': 'tree', 'params': {'ccp_alpha': [0.001, 0.01]}},
+            # {'clf': 'forest', 'params': {'ccp_alpha': [0.0]}},
+            # {'clf': 'xgboost', 'params': {'max_leaves': [0]}}
         ],
         'path': 'Datasets/assistment/assistment.csv',
         'target_col': 'correct',
@@ -63,9 +60,9 @@ data_sets = {
     },
     'citizen_science': {
         'models': [
-            {'clf': DecisionTreeClassifier(), 'params': {'ccp_alpha': [0.001, 0.01]}},
-            {'clf': RandomForestClassifier(), 'params': {'ccp_alpha': [0.0]}},
-            {'clf': XGBClassifier(), 'params': {'max_leaves': [0]}}
+            {'clf': 'tree', 'params': {'ccp_alpha': [0.001, 0.01]}},
+            # {'clf': 'forest', 'params': {'ccp_alpha': [0.0]}},
+            # {'clf': 'xgboost', 'params': {'max_leaves': [0]}}
         ],
         'path': 'Datasets/citizen_science/citizen_science.csv',
         'target_col': 'd_label',

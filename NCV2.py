@@ -3,9 +3,9 @@ import random
 import numpy as np
 import pandas as pd
 
-import ExperimentSettings4 as es
-import RunnerFinal as r
-from Models import Model, evaluate_params
+import ES5 as es
+import FR2 as r
+from M2 import Model, evaluate_params
 
 
 class NestedCrossValidationProcess:

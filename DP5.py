@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import MinMaxScaler
 
-import ExperimentSettings4 as es
+import ES5 as es
 
 
 class DataPreparations:

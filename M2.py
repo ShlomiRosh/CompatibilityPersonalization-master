@@ -1,32 +1,26 @@
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import auc, roc_auc_score
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 
 class Model:
-    def __init__(self, clf, model_name='model', old_model=None, diss_weight=None, subset_weights=None,
+    def __init__(self, model_type, model_name='model', old_model=None, diss_weight=None, subset_weights=None,
                  hist_range=None, params=None):
+        self.model_type = model_type
         self.model_name = model_name
-        self.clf = clf
         self.old_model = old_model
         self.diss_weight = diss_weight
         self.subset_weights = subset_weights
         self.hist_range = hist_range
         self.params = params.copy()
-
-        # self.base_params = {}
-        # for key, value in list(self.params.items()):
-        #     if '_base_' in key:
-        #         del self.params[key]
-        #         self.base_params[key[6:]] = value  # remove the '_base_' string
-        #
-        # if model_type == 'tree':
-        #     self.predictor = DecisionTreeClassifier(random_state=1, **self.params)
-        # elif model_type == 'ridge':
-        #     self.predictor = Ridge(random_state=1, **self.params)
-        # elif model_type == 'adaboost':
-        self.predictor = clf.set_params(random_state=1, **self.params)
-        # else:
-        #     raise ValueError('invalid model type')
+        if model_type == 'tree':
+            self.predictor = DecisionTreeClassifier(random_state=1, **self.params)
+        elif model_type == 'forest':
+            self.predictor = RandomForestClassifier(random_state=1, **self.params)
+        elif model_type == 'xgboost':
+            self.predictor = XGBClassifier(random_state=1, **self.params)
 
     def fit(self, x, y):
         self.predictor.fit(x, y, sample_weight=self.get_sample_weights(x, y))
@@ -79,7 +73,6 @@ class Model:
             return {'y': performance, 'predicted': new_predicted}
         old_correct = np.equal(self.old_model.predictor.predict(x), y).astype(int)
         sum_old_correct = np.sum(old_correct)
-
         if sum_old_correct == 0:
             compatibility = 1  # no errors can be new - dissonance can only be 0
         else:
