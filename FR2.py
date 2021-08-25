@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 
 import AnalyseResults
-import DataPreparation4 as dp
-import ExperimentSettings4 as es
-import NestedCrossValidation as ncv
+import DP5 as dp
+import ES5 as es
+import NCV2 as ncv
 
 
 class ModuleTimer:
@@ -78,7 +78,7 @@ def show_result(params):
         log_dir = '%s/%s' % (params['result_type_dir'], es.metrics[0])
         if len(es.model_names):
             AnalyseResults.binarize_results_by_compat_values(log_dir, 'test', len(params['diss_weights']) * 4,
-                                                             print_progress=True)
+                                                             print_progress=False)
             models_for_plotting = AnalyseResults.get_model_dict('jet')
             AnalyseResults.plot_results(log_dir, es.dataset_name, models_for_plotting, 'test_bins', True,
                                         show_tradeoff_plots=es.show_tradeoff_plots, diss_labels=False,
@@ -86,15 +86,6 @@ def show_result(params):
         else:  # only h1
             df = pd.read_csv('%s/test_log.csv' % log_dir)
             print(np.average(df['h1_acc'], weights=df['len']))
-
-
-# def safe_make_dir(path):
-#     if not os.path.exists(path):
-#         os.makedirs(path)
-#
-#
-# def min_and_max(x):
-#     return pd.Series(index=['min', 'max'], data=[x.min(), x.max()])
 
 
 def get_time_string(time_in_seconds):
