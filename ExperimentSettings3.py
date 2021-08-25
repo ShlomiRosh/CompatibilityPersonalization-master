@@ -1,5 +1,5 @@
-# dataset_name = 'assistment'
-dataset_name = 'citizen_science'
+dataset_name = 'assistment'
+# dataset_name = 'citizen_science'
 # dataset_name = 'mooc'
 
 model_params = {'name': 'tree',

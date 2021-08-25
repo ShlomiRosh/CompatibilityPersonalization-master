@@ -46,7 +46,7 @@ class DataPreparations:
         self.__prepared_params = self.__get_prepared_params(cache_dir, user_col, done_by_seed)
 
     def __get_prepared_params(self, cache_dir, user_col, done_by_seed):
-        data_config = es.data_sets[es.dataset_name], user_ids = []
+        data_config, user_ids = es.data_sets[es.dataset_name], []
         hists_by_user, hist_train_ranges = {}, {}
         curr_h2_len, num_users_to_test = 0, 0
 
