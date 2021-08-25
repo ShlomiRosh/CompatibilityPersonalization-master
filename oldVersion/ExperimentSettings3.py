@@ -18,7 +18,7 @@ model_params = {'name': 'tree',
 
 
 # output settings
-result_dir = 'result'
+result_dir = '../result'
 overwrite_result_folder = True
 reset_cache = False
 

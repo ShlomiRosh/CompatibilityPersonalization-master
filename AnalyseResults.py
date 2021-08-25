@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.stats import ttest_rel
 from sklearn.metrics import auc
 
-from ExperimentSettings import get_experiment_parameters
+from oldVersion.ExperimentSettings import get_experiment_parameters
 
 
 def safe_make_dir(path):
@@ -136,6 +136,9 @@ def plot_results(log_dir, dataset, models, log_set, compare_by_percentage, bin_s
     for i in range(len(model_names)):
         autc = autcs_average[i]
         if compare_by_percentage:
+            print(
+                f'autc = {autc}. no_hist_autc = {no_hist_autc}. (autc / no_hist_autc - 1) = {(autc / no_hist_autc - 1)}')
+
             autc_improvs.append((autc / no_hist_autc - 1) * 100)
         else:
             autc_improvs.append(autc - no_hist_autc)
