@@ -147,11 +147,3 @@ only_test = False
 make_tradeoff_plots = True
 # AnalyseResults and RunnerFinal
 show_tradeoff_plots = True
-
-# NOT IN USED
-# plot_confusion = False
-# keep_train_test_ratio = True
-# predetermined_timestamps = True
-# min_subset_size = 5
-# normalize_numeric_features = False
-#

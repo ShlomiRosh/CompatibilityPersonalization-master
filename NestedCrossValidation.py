@@ -178,8 +178,6 @@ class NestedCrossValidationProcess:
         if evaluating_params:
             scores_per_model = {}
             for model_name in es.model_names:
-                # TODO
-                # if model_name not in es.model_params['forced_params_per_model']:
                 found = False
                 if not es.autotune_autc:  # look for best params to steal from other models
                     for member in params['no_compat_equality_groups_per_model'][model_name]:

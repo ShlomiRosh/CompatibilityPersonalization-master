@@ -117,7 +117,7 @@ class DataPreparations:
 
         dataset_full = self.__load_data(user_col)
 
-        if data_config['hists_already_determined']:  # todo: handle multiple seeds when balancing
+        if data_config['hists_already_determined']:
             dataset_full.to_csv('%s/0.csv' % cache_dir, index=False)
             if not os.path.exists('%s/all_columns.csv' % cache_dir):
                 pd.DataFrame(columns=list(dataset_full.drop(columns=[user_col]).columns)).to_csv(

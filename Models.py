@@ -60,7 +60,7 @@ class Model:
             y_pred = self.predictor.predict_proba(x)
             if y_pred.shape[1] == 2:
                 y_pred = y_pred[:, 1]
-            else:  # todo: doesnt work when label=1 is the first label
+            else:
                 y_pred = 1 - y_pred.reshape(-1)
             labels = np.unique(y)
             if len(labels) == 1:  # to avoid error when calculating auc
