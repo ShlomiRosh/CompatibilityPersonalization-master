@@ -11,8 +11,8 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import MinMaxScaler
 
 import AnalyseResults
-from ExperimentSettings import get_experiment_parameters
-from Models import Model, evaluate_params
+from oldVersion.ExperimentSettings import get_experiment_parameters
+from oldVersion.Models import Model, evaluate_params
 
 
 class ModuleTimer:

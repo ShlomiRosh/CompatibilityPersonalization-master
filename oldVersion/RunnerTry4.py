@@ -3,13 +3,13 @@ import os.path
 import random
 from time import time
 
+import DataPreparation3 as dp
+import ExperimentSettings3 as es
 import numpy as np
 import pandas as pd
 
 import AnalyseResults
-import DataPreparation3 as dp
-import ExperimentSettings3 as es
-from Models import Model, evaluate_params
+from oldVersion.Models import Model, evaluate_params
 
 
 class ModuleTimer:
