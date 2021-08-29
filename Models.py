@@ -1,8 +1,8 @@
 import numpy as np
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.linear_model import Ridge
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import auc, roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 
 class Model:
@@ -15,22 +15,12 @@ class Model:
         self.subset_weights = subset_weights
         self.hist_range = hist_range
         self.params = params.copy()
-
-        self.base_params = {}
-        for key, value in list(self.params.items()):
-            if '_base_' in key:
-                del self.params[key]
-                self.base_params[key[6:]] = value  # remove the '_base_' string
-
         if model_type == 'tree':
             self.predictor = DecisionTreeClassifier(random_state=1, **self.params)
-        elif model_type == 'ridge':
-            self.predictor = Ridge(random_state=1, **self.params)
-        elif model_type == 'adaboost':
-            self.predictor = AdaBoostClassifier(DecisionTreeClassifier(random_state=1, **self.base_params),
-                                                random_state=1, **self.params)
-        else:
-            raise ValueError('invalid model type')
+        elif model_type == 'forest':
+            self.predictor = RandomForestClassifier(random_state=1, **self.params)
+        elif model_type == 'xgboost':
+            self.predictor = XGBClassifier(random_state=1, **self.params)
 
     def fit(self, x, y):
         self.predictor.fit(x, y, sample_weight=self.get_sample_weights(x, y))
@@ -83,7 +73,6 @@ class Model:
             return {'y': performance, 'predicted': new_predicted}
         old_correct = np.equal(self.old_model.predictor.predict(x), y).astype(int)
         sum_old_correct = np.sum(old_correct)
-
         if sum_old_correct == 0:
             compatibility = 1  # no errors can be new - dissonance can only be 0
         else:

@@ -112,16 +112,23 @@ metrics = ['auc']
 diss_weights = list(np.linspace(0, 1, data_sets[dataset_name]['weights_num']))
 
 # experiment settings
+# NestedCrossValidation only
 only_test = False
+# RunnerFinal only
 make_tradeoff_plots = True
+# AnalyseResults and RunnerFinal
 show_tradeoff_plots = True
-plot_confusion = False
-verbose = False
-keep_train_test_ratio = True
+
+# NOT IN USED
+# plot_confusion = False
+# keep_train_test_ratio = True
+# predetermined_timestamps = True
+# min_subset_size = 5
+# normalize_numeric_features = False
+#
+
 autotune_autc = False
-predetermined_timestamps = True
-min_subset_size = 5
-normalize_numeric_features = False
+verbose = False
 
 
 def get_experiment_parameters(dataset_name, result_analysis=False):

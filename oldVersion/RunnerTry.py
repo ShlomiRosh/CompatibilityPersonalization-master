@@ -8,9 +8,9 @@ import pandas as pd
 
 import AnalyseResults
 import DataPreparation as dp
-import ExperimentSettings as es
-from Models import Model, evaluate_params
-from sklearn.preprocessing import LabelBinarizer
+from oldVersion import ExperimentSettings as es
+from oldVersion.Models import Model, evaluate_params
+
 
 class ModuleTimer:
     def __init__(self, iterations):

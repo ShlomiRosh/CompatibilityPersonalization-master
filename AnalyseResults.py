@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.stats import ttest_rel
 from sklearn.metrics import auc
 
-from ExperimentSettings import get_experiment_parameters
+from oldVersion.ExperimentSettings import get_experiment_parameters
 
 
 def safe_make_dir(path):

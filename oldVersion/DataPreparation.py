@@ -8,8 +8,8 @@ import pandas as pd
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.preprocessing import MinMaxScaler
 
-import ExperimentSettings as es
-from ExperimentSettings import get_experiment_parameters
+from oldVersion import ExperimentSettings as es
+from oldVersion.ExperimentSettings import get_experiment_parameters
 
 
 def safe_make_dir(path):

@@ -1,13 +1,12 @@
 import csv
+import os.path
 from time import time
 
 import numpy as np
 import pandas as pd
 
 import AnalyseResults
-import DP5 as dp
-import ES5 as es
-import NCV2 as ncv
+from oldVersion import NestedCrossValidation as ncv, DataPreparation4 as dp, ExperimentSettings4 as es
 
 
 class ModuleTimer:
@@ -88,6 +87,15 @@ def show_result(params):
             print(np.average(df['h1_acc'], weights=df['len']))
 
 
+def safe_make_dir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def min_and_max(x):
+    return pd.Series(index=['min', 'max'], data=[x.min(), x.max()])
+
+
 def get_time_string(time_in_seconds):
     eta_string = '%.1f(secs)' % (time_in_seconds % 60)
     if time_in_seconds >= 60:
@@ -104,6 +112,7 @@ def get_time_string(time_in_seconds):
 
 def main():
     params = dp.DataPreparations().get_experiment_parameters()
+    # save_params_to_json(params)
     timers_params = {}
     set_timers(params, timers_params)
     ncv.NestedCrossValidationProcess(params, timers_params)
