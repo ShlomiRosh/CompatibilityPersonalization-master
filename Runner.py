@@ -1,10 +1,6 @@
 import csv
 from time import time
 
-import numpy as np
-import pandas as pd
-
-import AnalyseResults
 import DataPreparation as dp
 import ExperimentSettings as es
 import NestedCrossValidation as ncv
@@ -73,21 +69,6 @@ def log_progress(params, loops_params, timers_params, seeds_params, verbose=True
         print(progress)
 
 
-def show_result(params):
-    if es.make_tradeoff_plots:
-        log_dir = '%s/%s' % (params['result_type_dir'], es.metrics[0])
-        if len(es.model_names):
-            AnalyseResults.binarize_results_by_compat_values(log_dir, 'test', len(params['diss_weights']) * 4,
-                                                             print_progress=False)
-            models_for_plotting = AnalyseResults.get_model_dict('jet')
-            AnalyseResults.plot_results(log_dir, es.dataset_name, models_for_plotting, 'test_bins', True,
-                                        show_tradeoff_plots=es.show_tradeoff_plots, diss_labels=False,
-                                        performance_metric=es.metrics[0])
-        else:  # only h1
-            df = pd.read_csv('%s/test_log.csv' % log_dir)
-            print(np.average(df['h1_acc'], weights=df['len']))
-
-
 def get_time_string(time_in_seconds):
     eta_string = '%.1f(secs)' % (time_in_seconds % 60)
     if time_in_seconds >= 60:
@@ -107,7 +88,6 @@ def main():
     timers_params = {}
     set_timers(params, timers_params)
     ncv.NestedCrossValidationProcess(params, timers_params)
-    show_result(params)
 
 
 if __name__ == "__main__":
